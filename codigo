@@ -1,0 +1,123 @@
+echo "# Tela-de-Aparencia-Renpy" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/m-a-y-2000/Tela-de-Aparencia-Renpy.git
+git push -u origin main
+
+# DEVE SER POSTO ANTES DO START.
+
+# Aparência 1: variáveis necessárias para as variações da aparência do personagem.
+init python:
+
+    # Variáveis separadas (cor do cabelo e cor dos olhos)
+    cabpreto = False
+    cabvermelho = False
+    cabloiro = False
+
+    olhoroxo = False
+    olhoverde = False
+    olhoazul = False
+
+    # Variáveis juntas (cor do cabelo + cor dos olhos)
+    preto_roxo = False
+    preto_azul = False
+    preto_verde = False
+
+    vermelho_roxo = False
+    vermelho_azul = False
+    vermelho_verde = False
+
+    loiro_roxo = False
+    loiro_azul = False
+    loiro_verde = False
+    
+    # Variável necessária para ativar a tela de aparência
+    inicio = False
+    
+# Tela dos capítulos: para funcionar, tem que ter um botão para cada capítulo + um botão para acesso à tela de aparência.
+screen capitulos:
+    add "IMAGEM_DE_FUNDO"
+    imagemap:
+        ground "images/IMAGEM_DE_FUNDO.png"
+        hover "images/IMAGEM_DE_FUNDO_SELECAO.png"
+        hotspot(65, 140, 313, 191) action Jump("capitulo1")
+        if(persistent."capitulo2):
+            hotspot(484, 147, 313, 177) action Jump(""capitulo2")
+        if(persistent."capitulo3):
+            hotspot(900, 147, 309, 180) action Jump(""capitulo3")
+        if(persistent."capitulo4):
+            hotspot(66, 435, 308, 181) action Jump(""capitulo4")
+        if(persistent."capitulo5):
+            hotspot(483, 433, 308, 183) action Jump(""capitulo5")
+        if(persistent."capitulo6):
+            hotspot(899, 432, 309, 180) action Jump(""capitulo6")
+
+# Se o jogo não iniciar, a tela de aparência estará disponível, do contrário, é necessário que essa variável
+# seja desativada com o final do jogo para que a aparência possa ser alterada novamente.
+        if inicio == False:
+            hotspot(633, 24, 237, 51) action Jump("aparencia")
+
+# Tela da aparência: para funcionar, tem que ter um botão para cada cor de cabelo e cor de olhos disponível + um botão para acesso à tela de capítulos.
+screen tela_aparencia:
+    imagemap:
+        ground "images/IMAGEM_DE_FUNDO.png"
+        hover "images/IMAGEM_DE_FUNDO_SELECAO.png"
+        hotspot(715, 249, 119, 123) action [SetVariable("cabpreto", True), SetVariable("cabloiro", False), SetVariable("cabvermelho", False), Jump("aparencia")]
+        hotspot(845, 250, 118, 124) action [SetVariable("cabloiro", True), SetVariable("cabpreto", False), SetVariable("cabvermelho", False), Jump("aparencia")]
+        hotspot(973, 249, 121, 124) action [SetVariable("cabvermelho", True), SetVariable("cabloiro", False), SetVariable("cabpreto", False), Jump("aparencia")]
+
+        hotspot(716, 510, 118, 122) action [SetVariable("olhoroxo", True), SetVariable("olhoazul", False), SetVariable("olhoverde", False), Jump("aparencia")]
+        hotspot(844, 510, 120, 122) action [SetVariable("olhoazul", True), SetVariable("olhoroxo", False), SetVariable("olhoverde", False), Jump("aparencia")]
+        hotspot(973, 509, 120, 125) action [SetVariable("olhoverde", True), SetVariable("olhoazul", False), SetVariable("olhoroxo", False), Jump("aparencia")]
+
+        hotspot(934, 20, 235, 54) action Jump("start")
+        
+# Começo.
+label start:
+    call screen capitulos with fade
+    # Ative a variável 'inicio' assim que começar o capítulo.
+
+# Aparência 2: a depender das variáveis ativas, aparece o desenho do personagem com as cores escolhidas.
+label aparencia:
+    if cabpreto == True:
+
+        if olhoroxo == True:
+            scene IMAGEM_PRETO_ROXO
+
+        elif olhoazul == True:
+            scene IMAGEM_PRETO_AZUL
+
+        elif olhoverde == True:
+            scene IMAGEM_PRETO_VERDE
+
+    elif cabvermelho == True:
+
+        if olhoroxo == True:
+            scene IMAGEM_VERMELHO_ROXO
+
+        elif olhoazul == True:
+            scene IMAGEM_VERMELHO_AZUL
+
+        elif olhoverde == True:
+            scene IMAGEM_VERMELHO_VERDE
+
+    elif cabloiro == True:
+
+        if olhoroxo == True:
+            scene IMAGEM_LOIRO_ROXO
+
+        elif olhoazul == True:
+            scene IMAGEM_LOIRO_AZUL
+
+        elif olhoverde == True:
+            scene IMAGEM_LOIRO_VERDE
+           
+    # Se nenhuma opção for escolhida, o personagem ficará com suas cores padrão.
+    else:
+        scene IMAGEM_PRETO_ROXO
+        $cabpreto = True
+        $olhoroxo = True
+
+    call screen tela_aparencia
